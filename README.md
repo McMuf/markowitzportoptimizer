@@ -1,8 +1,3 @@
-# Markowitz Portfolio Optimization: Does It Survive Out-of-Sample?
-
-A from-scratch implementation of mean-variance portfolio optimization — closed-form
-derivation, not a library call — extended to test whether the "optimal" portfolio
-it produces actually holds up on data it hasn't seen.
 
 ## Why this project
 
@@ -36,32 +31,18 @@ implementing Markowitz's mean-variance framework.)
 - **Test suite** validates the closed-form solution against numerical methods and
   checking basic invariants (weights sum to 1, target return is hit)
 
-## Project structure
-
-```
-src/
-├── data.py         # price data fetching + local caching
-├── stats.py         # mu, Sigma computation from historical returns
-├── optimizer.py      # closed-form solver + tangency portfolio
-├── shrinkage.py       # Ledoit-Wolf covariance + train/test backtest logic
-└── plotting.py        # efficient frontier, covariance heatmap, backtest charts
-notebooks/
-└── analysis.ipynb      # full narrative: theory → derivation → results → limitations
-tests/
-└── test_optimizer.py    # correctness checks against scipy, sanity invariants
-```
 
 ## Key design decisions
 
-- **`np.linalg.solve` over `np.linalg.inv`** because matrix inversion increases
+- `np.linalg.solve` over `np.linalg.inv` because matrix inversion increases
   numerical error when the covariance matrix is near-singular. Therefore solving the
   linear system directly is more stable and accurate.
-- **Closed-form implementation validated against `scipy.optimize`** (checking
+- Closed-form implementation validated against `scipy.optimize`(checking
   answers) — not used as the primary solver, just as a check on the hand-derived
   math.
-- **Annualized daily returns (×252)** is standard convention for comparing to
+- Annualized daily returns (×252) is standard convention for comparing to
   typical annual return/risk figures.
-- **Ledoit-Wolf shrinkage over raw sample covariance** is because the sample
+- Ledoit-Wolf shrinkage over raw sample covariance is because the sample
   covariance matrix is a poor estimator when the number of assets approaches the
   number of observations; shrinkage blends it toward a more stable, lower-variance
   target.
@@ -81,8 +62,7 @@ Both Markowitz variants produced a negative out-of-sample Sharpe ratio, while th
 naive 1/N benchmark comfortably outperformed. This is an interesting thing to point
 out, however it is a well-documented result (DeMiguel, Garlappi & Uppal, 2009). The
 reason why is mean-variance weights are so sensitive to estimation error in μ that
-the "optimal" in-sample portfolio can be harmful out-of-sample, and simple heuristics
-often beat it in practice. Another thing is that shrinkage helps at the margin here
+the "optimal" in-sample portfolio can be harmful out-of-sample. Another thing is that shrinkage helps at the margin here
 but doesn't flip the sign. As well, numbers will shift with the universe, date range,
 and train/test split (solution is to re-run `notebooks/analysis.ipynb` to reproduce
 or vary them).
