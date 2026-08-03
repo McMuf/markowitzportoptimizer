@@ -24,18 +24,6 @@ Markowitz's mean-variance framework)
 - Test suite validates the closed-form solution against numerical methods and
   checking basic invariants (weights sum to 1, target return is hit)
 
-Here's what the project structure looks like: 
-src/
-├── data.py         # price data fetching + local caching
-├── stats.py         # mu, Sigma computation from historical returns
-├── optimizer.py      # closed-form solver + tangency portfolio
-├── shrinkage.py       # Ledoit-Wolf covariance + train/test backtest logic
-└── plotting.py        # efficient frontier, covariance heatmap, backtest charts
-notebooks/
-└── analysis.ipynb      # analysis
-tests/
-└── test_optimizer.py    # correctness checks against scipy, sanity invariants
-
 
 ## Key design decisions 
 
